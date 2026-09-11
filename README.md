@@ -338,6 +338,22 @@ To use AuK-Flash, set:
 ```
 AuK-Flash use 4 fixed time steps and set CFG=0.
 
+**Lower VRAM usage (CUDA only)**
+
+Add `--cpu_offload` to `auk-infer` or `auk-gradio`, set `cpu_offload=True`
+when constructing `AukInfer`, or enable `cpu_offload` in ComfyUI's
+**AuK Model Loader**. It is disabled by default and works with both AuK variants.
+
+This uses Accelerate's `cpu_offload_with_hook` to load Qwen and the DiT only
+when needed. The DiT stays on GPU throughout sampling; the VAE moves to GPU
+for reference encoding and output decoding. Idle components stay in CPU RAM,
+and all three return to CPU after each request, including on inference errors.
+This reduces resident GPU weights at the cost of CPU RAM and transfer latency.
+Each complete component plus its intermediate tensors must still fit in VRAM;
+this option does not provide block-level offloading or quantization. Existing
+weight precision and sampling settings are unchanged. Calls on the same engine
+must be serialized.
+
 ### Interactive Gradio demo
 
 Install the Gradio dependencies with `pip install -e ".[gradio]"` (or the

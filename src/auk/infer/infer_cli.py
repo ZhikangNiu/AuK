@@ -48,6 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--dtype", choices=["fp16", "bf16", "fp32"], default="bf16", help="autocast dtype")
     p.add_argument("--seed", type=int, default=None, help="random seed")
     p.add_argument("--device", default=None, help="cuda / cuda:0 / cpu (auto if unset)")
+    p.add_argument("--cpu_offload", action="store_true", help="offload idle model components to CPU (CUDA only)")
 
     p.add_argument("--output", "-o", required=True, help="output wav path")
     return p
@@ -72,6 +73,7 @@ def main():
         device=args.device,
         dtype=args.dtype,
         qwen_path=args.qwen_path,
+        cpu_offload=args.cpu_offload,
     )
 
     # no --audio => Instruct TTS; generate() appends the |<no_prompt_audio>| marker for the text-only turn

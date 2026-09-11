@@ -60,9 +60,12 @@ are also supported.
   seconds**, after PE preprocessing, resampling, and model-frame rounding.
   Long Cookbook examples may need shorter inputs; the node does not split
   audio automatically.
-- **Memory:** models stay resident on the selected device and are reused.
+- **Memory:** models stay resident on the selected device and are reused by default.
+  Enable `cpu_offload` in **AuK Model Loader** to keep idle components in CPU
+  RAM and move them to CUDA only when needed. This trades inference speed for
+  lower VRAM use; each component and its intermediate tensors must still fit.
   Switching model settings may load another engine; restart ComfyUI to release
-  them. Automatic ComfyUI VRAM offload is not supported.
+  them. This opt-in mode is separate from ComfyUI's automatic VRAM management.
 - **Audio:** each execution accepts one input sample and averages channels to
   mono. The node returns the generated waveform directly, without Gradio's
   extra loudness processing for lyric editing and vocal extraction; output
